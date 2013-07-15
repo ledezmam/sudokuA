@@ -1,2 +1,2 @@
-Readme for sudokuA
+sudokuA
 =======
