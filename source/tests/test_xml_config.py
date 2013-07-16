@@ -64,7 +64,7 @@ class TestXmlConfig(unittest.TestCase):
         self.assertEquals(expected_levels, self.xml_config.get_valid_data_game(self.path_game_settings, 'level', 'name'))
 
     def test_get_valid_data_game_returns_list_of_algorithms_if_algorithm_specified(self):
-        expected_algorithms = ['backtracking', 'norvig', 'x']
+        expected_algorithms = ['backtracking', 'norvig', 'brute force']
         self.assertEquals(expected_algorithms, self.xml_config.get_valid_data_game(self.path_game_settings, 'algorithm', 'name'))
 
     def test_get_complexity_returns_error_message_if_level_tag_does_not_exist(self):
@@ -174,7 +174,55 @@ class TestXmlConfig(unittest.TestCase):
         expected_algorithm = 'norvig'
         self.xml_config.modify_algorithm('norvig')
         current_algorithm = self.xml_config.get_algorithm()
-        self.assertEquals(expected_algorithm, current_algorithm)        
+        self.assertEquals(expected_algorithm, current_algorithm) 
+
+    def test_get_space_char_returns_error_message_if_space_char_tag_does_not_exist(self):
+        expected_message = "Tag is missing!"
+        file_config = open(self.xml_config.path_name, 'w')
+        file_config.write('<none>')
+        file_config.close()
+        self.assertEquals(expected_message, self.xml_config.get_space_char())
+
+    def test_get_space_char_returns_default_space_char_value_if_value_exists(self):
+        expected_default_space_char = '0'
+        self.assertEquals(expected_default_space_char, self.xml_config.get_space_char())        
+
+    def test_modify_space_char_returns_error_message_if_space_char_tag_does_not_exist(self):
+        expected_message = "Tag is missing!"
+        file_config = open(self.xml_config.path_name, 'w')
+        file_config.write('<config><ss>')
+        file_config.close()
+        self.assertEquals(expected_message, self.xml_config.modify_space_char('*'))
+
+    def test_modify_space_char_saves_a_dot_in_config_file_if_a_dot_is_used_as_empty_char(self):
+        expected_space_char = '.'
+        self.xml_config.modify_space_char('.')
+        current_space_char = self.xml_config.get_space_char()
+        self.assertEquals(expected_space_char, current_space_char)   
+
+    def test_get_min_holes_by_complexity_when_complexity_is_easy(self):
+        expected_min_holes = 20
+        self.assertEquals(expected_min_holes, self.xml_config.get_min_holes_by_complexity('easy')) 
+
+    def test_get_min_holes_by_complexity_when_complexity_is_medium(self):
+        expected_min_holes = 30
+        self.assertEquals(expected_min_holes, self.xml_config.get_min_holes_by_complexity('medium'))
+
+    def test_get_min_holes_by_complexity_when_complexity_is_hard(self):
+        expected_min_holes = 40
+        self.assertEquals(expected_min_holes, self.xml_config.get_min_holes_by_complexity('hard'))
+
+    def test_get_max_holes_by_complexity_when_complexity_is_easy(self):
+        expected_max_holes = 25
+        self.assertEquals(expected_max_holes, self.xml_config.get_max_holes_by_complexity('easy')) 
+
+    def test_get_max_holes_by_complexity_when_complexity_is_medium(self):
+        expected_max_holes = 40
+        self.assertEquals(expected_max_holes, self.xml_config.get_max_holes_by_complexity('medium'))
+
+    def test_get_max_holes_by_complexity_when_complexity_is_hard(self):
+        expected_max_holes = 50
+        self.assertEquals(expected_max_holes, self.xml_config.get_max_holes_by_complexity('hard'))  
 
     def tearDown(self):
         shutil.copy2('copy_config.xml', self.xml_config.path_name)

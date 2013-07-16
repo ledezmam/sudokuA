@@ -2,15 +2,15 @@
 Author: Maria Ledezma
 Creation Date: 07/01/2013
 """
-import inspect
-import re
-import os.path
-import xml.etree.ElementTree as ET
+import inspect 
+import re 
+import os.path 
+import xml.etree.ElementTree as ET 
 
-class Configuration():
+class Configuration(): 
     """Super class that manipulates the configuration file for Sudoku game"""
 
-    def __init__(self, config_file_name):
+    def __init__(self, config_file_name = "config.xml"): 
         """constructor that sets the name and path_name of the configuration file.
 
             Keyword arguments:
@@ -21,7 +21,7 @@ class Configuration():
         self.base_path = self.get_base_path()
         self.path_name = self.base_path + self.file_name
 
-    def get_base_path(self):
+    def get_base_path(self): 
         """Gets the base path of the configuration file"""
         file_path_inspect = inspect.getouterframes(inspect.currentframe())[1][1]
         file_path_inspect = os.path.abspath(file_path_inspect)
@@ -30,14 +30,14 @@ class Configuration():
 
     def read_configuration_file(self):
         """Abstract method: Reads the configuration file defined in the constructor.
-           Definition and more codumentation in the child class.
+           Definition and more documentation in the child class.
 
         """
         raise Exception("Define this method in a sub-class")
 
     def modify_complexity(self, complexity):
         """Abstract method - Modifies the complexity in the configuration file.
-           Definition and more codumentation in the child class.
+           Definition and more documentation in the child class.
 
             Keyword arguments:
             complexity -- the complexity of the game e.g. 'hard'
@@ -48,7 +48,7 @@ class Configuration():
     def modify_output_type(self, output_type):
         """Abstract method - Modifies the output type of the solution in the 
                             configuration file.
-           Definition and more codumentation in the child class.
+           Definition and more documentation in the child class.
 
             Keyword arguments:
             output_type -- the type of the output of the game e.g. 'console'
@@ -59,10 +59,21 @@ class Configuration():
     def modify_algorithm(self, algorithm):
         """Abstract method - Modifies the algorithm for Sudoku solution in the 
                             configuration file.
-           Definition and more codumentation in the child class.
+           Definition and more documentation in the child class.
 
             Keyword arguments:
             algorithm -- the algorithm to be used in the game e.g. 'norvig'
+            
+        """
+        raise Exception("Define this method in a sub-class")
+
+    def modify_space_char(self, empty_spot_char):
+        """Abstract method - Modifies the character used as empty spot for Sudoku solution in the 
+                            configuration file.
+           Definition and more documentation in the child class.
+
+            Keyword arguments:
+            empty_spot_char -- the character that represents a empty spot e.g. '0'
             
         """
         raise Exception("Define this method in a sub-class")

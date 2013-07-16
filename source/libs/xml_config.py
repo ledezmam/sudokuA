@@ -2,16 +2,16 @@
 Author: Maria Ledezma
 Creation Date: 07/02/2013
 """
-import os
-import xml.etree.ElementTree as ET
-from configuration import Configuration
+import os 
+import xml.etree.ElementTree as ET 
+from configuration import Configuration 
 
 class XMLConfig(Configuration):
     """Child class that inheritates of Configuration and handles a XML 
     configuration file for Sudoku game
 
     """
-    def __init__(self, config_file_name = "config.xml"):
+    def __init__(self, config_file_name = "config.xml"): 
         """Constructor that calls constructor of super class Configuration and 
             forms path to game_settings
 
@@ -70,14 +70,16 @@ class XMLConfig(Configuration):
             error_msg = "Invalid data or file" 
             return error_msg
     
-    def get_valid_data_game(self, file_path, xml_tag_path, attrib_name):
+    def get_valid_data_game(self, file_path, xml_tag_path, attrib_name, conditional_attrib = "", conditional_value = ""):
         """Returns a list of valid data that can be iterated and have an attribute
             defined in the game_settings.xml
 
            Keyword arguments:
             file_path -- the file and path of the xml to get the data
             xml_tag_path -- the tag path in the xml file to be iterated e.g. 'level'
-            attrib_name -- name of the attribute to collect the data e.g. 'name'
+            attrib_name -- name of the attribute to collect the data e.g. 'min_holes'
+            conditional_attib -- name of the attribute that will filter the data e.g. 'name' 
+            conditional_value -- the value of conditional_attib that will filter the data e.g. 'easy'
 
         """
         try:
@@ -86,7 +88,11 @@ class XMLConfig(Configuration):
             list_items = []
             
             for item in root.iter(xml_tag_path):
-                list_items.append(item.attrib[attrib_name])
+                if conditional_attrib == "":
+                    list_items.append(item.attrib[attrib_name])
+                else:
+                    if item.attrib[conditional_attrib] == conditional_value:
+                        list_items.append(item.attrib[attrib_name])
 
             return list_items
 
@@ -98,6 +104,34 @@ class XMLConfig(Configuration):
         try:
             complexity = self.get_value_from_xml(self.path_name, 'level/value')
             return complexity
+        except:
+            error_msg = "Tag is missing!" 
+            return error_msg
+
+    def get_min_holes_by_complexity(self, complexity):
+        """Returns the minimum quantity of holes by complexity
+
+            Keyword arguments:
+            complexity -- the string that represents the complexity of the game e.g. 'easy'
+
+        """
+        try:
+            min_holes = self.get_valid_data_game(self.path_game_settings, 'level' , 'min_holes', 'name', complexity.lower())
+            return int(min_holes[0])
+        except:
+            error_msg = "Tag is missing!" 
+            return error_msg
+
+    def get_max_holes_by_complexity(self, complexity):
+        """Returns the maximum quantity of holes by complexity
+
+            Keyword arguments:
+            complexity -- the string that represents the complexity of the game e.g. 'easy'
+            
+        """
+        try:
+            max_holes = self.get_valid_data_game(self.path_game_settings, 'level' , 'max_holes', 'name', complexity.lower())
+            return int(max_holes[0])
         except:
             error_msg = "Tag is missing!" 
             return error_msg
@@ -179,6 +213,30 @@ class XMLConfig(Configuration):
         try:
             algorithm = self.get_value_from_xml(self.path_name, 'algorithm/value')
             return algorithm
+        except:
+            error_msg = "Tag is missing!"
+            return error_msg
+
+    def modify_space_char(self, empty_spot_char):
+        """Modifies the character used as empty spot for Sudoku in the 
+            configuration file.
+
+            Keyword arguments:
+            empty_spot_char -- the character that represents a empty spot e.g. '0'
+            
+        """
+        try:
+                self.write_value_to_xml(self.path_name, 'space_char/value', empty_spot_char)
+                return "Space Character: '" + empty_spot_char + "' was set successfully!"
+        except:
+            error_msg = "Tag is missing!" 
+            return error_msg
+
+    def get_space_char(self):
+        """Returns the character used as space set in the configuration file e.g. '0' """
+        try:
+            empty_spot_char = self.get_value_from_xml(self.path_name, 'space_char/value')
+            return empty_spot_char
         except:
             error_msg = "Tag is missing!"
             return error_msg
