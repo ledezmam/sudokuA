@@ -2,8 +2,7 @@
 Author: Maria Ledezma
 Creation Date: 07/01/2013
 """
-import inspect 
-import re 
+import inspect  
 import os.path 
 import xml.etree.ElementTree as ET 
 
@@ -23,10 +22,10 @@ class Configuration():
 
     def get_base_path(self): 
         """Gets the base path of the configuration file"""
-        file_path_inspect = inspect.getouterframes(inspect.currentframe())[1][1]
-        file_path_inspect = os.path.abspath(file_path_inspect)
-        base_path = re.findall(r'(.+SudokuA\\)', file_path_inspect)[0]
-        return base_path
+        base_path= os.path.dirname(os.path.dirname(os.path.dirname\
+                                                  (os.path.abspath(__file__))))
+
+        return base_path + "/"
 
     def read_configuration_file(self):
         """Abstract method: Reads the configuration file defined in the constructor.
