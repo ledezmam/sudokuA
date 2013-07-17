@@ -54,9 +54,13 @@ class TestXmlConfig(unittest.TestCase):
         self.assertEquals(expected_message, config_test.read_configuration_file())
 
     def test_read_configuration_file_returns_a_dictionary_of_configuration_if_valid_data(self):
-        dict_configuration = {'empty_spot_char':'0', 'output-type': 'file', 
-                              'algorithm': 'backtracking', 'output-path': 'results',
-                               'level': 'medium'}
+        empty_spot_char = self.xml_config.get_empty_spot_char()
+        output_type = self.xml_config.get_output_type()
+        algorithm = self.xml_config.get_algorithm()
+        level = self.xml_config.get_complexity()
+        dict_configuration = {'empty_spot_char': empty_spot_char, 'output-type': output_type, 
+                              'algorithm': algorithm, 'output-path': 'results',
+                               'level': level}
         self.assertEquals(dict_configuration, self.xml_config.read_configuration_file())
 
     def test_get_valid_data_game_returns_list_of_levels_if_level_specified(self):
@@ -80,6 +84,7 @@ class TestXmlConfig(unittest.TestCase):
 
     def test_get_complexity_returns_complexity_value_if_value_exists(self):
         expected_default_level = 'medium'
+        self.xml_config.modify_complexity('medium')
         self.assertEquals(expected_default_level, self.xml_config.get_complexity())        
    
     def test_modify_complexity_returns_error_message_if_level_tag_does_not_exist(self):
@@ -115,6 +120,7 @@ class TestXmlConfig(unittest.TestCase):
 
     def test_get_output_type_returns_output_type_value_if_value_exists(self):
         expected_default_output = 'file'
+        self.xml_config.modify_output_type('file')
         self.assertEquals(expected_default_output, self.xml_config.get_output_type())        
 
     def test_modify_output_type_returns_error_message_if_output_type_tag_does_not_exist(self):
@@ -149,6 +155,7 @@ class TestXmlConfig(unittest.TestCase):
 
     def test_get_value_from_xml_recovers_complexity_from_config_file(self):
         expected_complexity = 'medium'
+        self.xml_config.write_value_to_xml(self.xml_config.path_name, 'level/value','medium')
         complexity = self.xml_config.get_value_from_xml(self.xml_config.path_name, 'level/value')
         self.assertEquals(expected_complexity, complexity)
 
@@ -161,6 +168,7 @@ class TestXmlConfig(unittest.TestCase):
 
     def test_get_algorithm_returns_default_algorithm_value_if_value_exists(self):
         expected_default_algorithm = 'backtracking'
+        self.xml_config.modify_algorithm('backtracking')
         self.assertEquals(expected_default_algorithm, self.xml_config.get_algorithm())        
 
     def test_modify_algorithm_returns_error_message_if_algorithm_tag_does_not_exist(self):
@@ -189,6 +197,7 @@ class TestXmlConfig(unittest.TestCase):
 
     def test_get_empty_spot_char_returns_default_empty_spot_char_value_if_value_exists(self):
         expected_default_empty_spot_char = '0'
+        self.xml_config.modify_empty_spot_char('0')
         self.assertEquals(expected_default_empty_spot_char, self.xml_config.get_empty_spot_char())        
 
     def test_modify_empty_spot_char_returns_error_message_if_empty_spot_char_tag_does_not_exist(self):
