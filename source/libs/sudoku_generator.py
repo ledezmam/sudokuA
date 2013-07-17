@@ -8,39 +8,56 @@ class SudokuGenerator:
         self.board_list = []
         self.sudoku_pattern = []
 
-    def generate(self, number_to_fill = 9):
-        """Generates the sudoku solved, saved in board_list (list of lists)
-            Keyword arguments:
-            number_to_fill -- the quantity of cells to be filled per row
+    def generate(self):
+        """Calls fill_board method to generate sudoku board with the list of positions (column, row)
+             of the board_list and initial index 
 
         """
-        positions = self.get_positions(number_to_fill)
         index = 0
-        self.search(positions, index)
+        positions = self.get_positions()
+        self.fill_board(positions, index)
 
-    def get_positions(self, number_to_fill):
-        """ Gets the postions/coordinates of the whole board, returns a list of tuples
-
-            Keyword arguments:
-            number_to_fill -- the quantity of cells to be filled per row 
-        """
-        positions = []
-        fill_order = []
-
-        random.seed()
-
-        # setup board with list of zeros
+    def initiate_board_with_zeros(self, number_to_fill = 9):
+        """Fill in the board_list with zeros"""
         row = [0 * i for i in range(number_to_fill)]
         for i in range(0, 9):
             self.board_list.append(row[:])
 
-        #Fill in coordinates in the positions (column, row)
+    def get_positions(self):
+        """ Gets the list of postions/coordinates of the whole board, returns a list of tuples
+            (column, row)
+        """
+        positions = []
+        self.initiate_board_with_zeros()
+
         for j in range(0, 9):
             for i in range(0, 9):
                 positions.append((i, j))
         return positions
 
-    def search(self, positions, index):
+    def generate_numbers_to_fill_order(self):
+        """Generates numbers 1 - 9 to be used as values of sudoku cells"""
+        generated_numbers = []
+        for i in range(1, 10):
+            generated_numbers.append(i)
+        return generated_numbers
+
+    def get_fill_order_list(self):
+        """Gets a list of random numbers that will be used to collect the coordinates 
+            from positions.
+
+        """
+        random.seed()
+        generated_numbers = self.generate_numbers_to_fill_order()
+        fill_order = []
+        while len(generated_numbers) > 0:
+            i = random.randint(0, len(generated_numbers)-1)
+            fill_order.append(generated_numbers[i])
+            del generated_numbers[i]
+        return fill_order
+
+
+    def fill_board(self, positions, index):
         """Recursive method that searches the locations for the numbers of sudoku
             and fills the board_list with the numbers for sudoku
             If sudoku can be generated will return True otherwise False
@@ -50,21 +67,10 @@ class SudokuGenerator:
             index -- the index of each cell (0 - 81) e.g. 51
 
         """
-        nums = []
-        fill_order = []
-
-        #Compare if index is the last one e.g. 81
+        fill_order = self.get_fill_order_list()
+        
         if len(positions) == index:
             return self.is_valid_board()
-        #list of numbers 1-9 to be used to generate the fill order
-        for i in range(1, 10):
-            nums.append(i)
-
-        #get a list of random numbers that will be used to collect the coordinates from positions
-        while len(nums) > 0:
-            i = random.randint(0, len(nums)-1)
-            fill_order.append(nums[i])
-            del nums[i]
 
         for i in fill_order:
             x = positions[index][0]
@@ -72,7 +78,7 @@ class SudokuGenerator:
             self.board_list[x][y] = i
             
             if self.is_valid_board() is True:
-                if self.search(positions, index+1) is True:
+                if self.fill_board(positions, index + 1) is True:
                     return True
             self.board_list[x][y] = 0
         return False
@@ -130,25 +136,25 @@ class SudokuGenerator:
         """
         result = True
         found_list = []
-        xoffset = (3 * (square % 3))
-        yoffset = int(square / 3) * 3
+        x_offset = (3 * (square % 3))
+        y_offset = int(square / 3) * 3
         for j in range(0, 3):
             for i in range(0, 3):
-                if not self.board_list[xoffset + i][yoffset + j] == 0:
-                    if self.board_list[xoffset + i][yoffset + j] in found_list:                        
+                if not self.board_list[x_offset + i][y_offset + j] == 0:
+                    if self.board_list[x_offset + i][y_offset + j] in found_list:                        
                         result = False
-                    found_list.append(self.board_list[xoffset+i][yoffset+j])
+                    found_list.append(self.board_list[x_offset + i][y_offset + j])
         return result
 
     def generate_sudoku_pattern_by_complexity(self, min_holes, max_holes, empty_spot_char):
         """Saves in the sudoku_pattern, the pattern for the sudoku game with the 
-            space char defined; the complexity is defined by the number of holes
+            empty spot char defined; the complexity is defined by the number of holes
             to be used in the pattern.
 
             Keyword arguments:
             min_holes -- the number of minimum holes to set in the pattern e.g. 20
             max_holes --  the number of max_holes to set in the pattern e.g. 25
-            empty_spot_char --  the character to be used as space in the pattern e.g. '0'
+            empty_spot_char --  the character to be used as empty spot in the pattern e.g. '0'
 
         """
         self.generate()
@@ -165,7 +171,7 @@ class SudokuGenerator:
                     self.sudoku_pattern[i][j] = str(self.sudoku_pattern[i][j])
    
     def generate_random_positions(self, size_positions):
-        """Generates a list of random positions to place the space char 
+        """Generates a list of random positions to place the empty spot char 
 
             Keyword arguments:
             size_positions -- the quantity of random positions to be generated e.g. 23
@@ -179,34 +185,6 @@ class SudokuGenerator:
                 list_positions.append(position)
                 control_size += 1
         return list_positions
-
-    def get_board_format_to_print(self, board):
-        """Returns a string formatted to be printed in a file or console
-
-            Keyword arguments:
-            board -- the list of lists to be formatted as string
-
-        """
-        size_sudoku = len(board)
-        line_to_export = ""
-        row = " "
-        sep = ""
-        for i in range (0, size_sudoku):
-            for j in range(0, size_sudoku):
-                if (j % 3 == 0 and j > 0):
-                    row = row + "|" + " "
-                row = row + str(board[i][j]) + " "
-            if (i % 3 == 0 and i > 0):
-                for h in range (0, size_sudoku):
-                    if (h % 3 == 0 and h > 0):
-                        sep = sep + " + -"
-                    else:
-                        sep = sep + " -"
-                line_to_export = line_to_export + sep + "\n"  
-                sep = ""
-            line_to_export = line_to_export+ row + "\n"  
-            row = " "
-        return line_to_export
 
     def get_board_format_to_string(self, board):
         """Returns a string formatted for the input value for an algorithm solver

@@ -1,4 +1,5 @@
 import sys 
+import time
 from algorithm import Algorithm 
 from bit_handler import BitHandler 
 
@@ -154,24 +155,28 @@ class BruteForceAlgorithm(Algorithm):
             Returns the sudoku solved if it was resolvable otherwise returns a empty list
 
         """
-        list_lines = self.sudoku_to_solve.split('\n')
-        for i in range(9):
-            line = list_lines[i].strip()
-            for j in range(9):
-                current_character = line[j]
-                if ord(current_character) >= ord('1') and ord(current_character) <= ord('9'):
-                    if self.get_candidates(i, j) & BitHandler.bit_for(int(current_character)) == 0:
-                        sys.exit(0)
+        solved_sudoku = []
+        if self.sudoku_data_is_valid() is True:            
+            self.start_time = time.clock()  
+            list_lines = self.sudoku_to_solve.split('\n')
+            for i in range(9):
+                line = list_lines[i].strip()
+                for j in range(9):
+                    current_character = line[j]
+                    if ord(current_character) >= ord('1') and ord(current_character) <= ord('9'):
+                        if self.get_candidates(i, j) & BitHandler.bit_for(int(current_character)) == 0:
+                            sys.exit(0)
+                        else:
+                            self.set_cell(i, j, int(current_character))
+                    elif current_character == self.empty_spot_char:
+                        pass
                     else:
-                        self.set_cell(i, j, int(current_character))
-                elif current_character == self.empty_spot_char:
-                    pass
-                else:
-                    raise Exception, "Bad input: " + current_character
-        if self.execute_algorithm(lambda i, j: True, True, True):
-            self.convert_matrix_solved_in_str_matrix()
-            return self.cells
-        return []
+                        raise Exception, "Bad input: " + current_character
+            if self.execute_algorithm(lambda i, j: True, True, True):
+                self.convert_matrix_solved_in_str_matrix()
+                self.end_time = time.clock()
+                solved_sudoku = self.cells
+        return solved_sudoku
 
     def convert_matrix_solved_in_str_matrix(self):
         """Converts the int matrix to char matrix to follow the format of other algorithms"""

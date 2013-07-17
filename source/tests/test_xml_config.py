@@ -54,18 +54,22 @@ class TestXmlConfig(unittest.TestCase):
         self.assertEquals(expected_message, config_test.read_configuration_file())
 
     def test_read_configuration_file_returns_a_dictionary_of_configuration_if_valid_data(self):
-        dict_configuration = {'space_char':'0', 'output-type': 'file', 
+        dict_configuration = {'empty_spot_char':'0', 'output-type': 'file', 
                               'algorithm': 'backtracking', 'output-path': 'results',
                                'level': 'medium'}
         self.assertEquals(dict_configuration, self.xml_config.read_configuration_file())
 
     def test_get_valid_data_game_returns_list_of_levels_if_level_specified(self):
         expected_levels = ['easy', 'medium', 'hard']
-        self.assertEquals(expected_levels, self.xml_config.get_valid_data_game(self.path_game_settings, 'level', 'name'))
+        self.assertEquals(expected_levels, self.xml_config.get_valid_data_game(
+                                                                    self.path_game_settings,
+                                                                    'level', 'name'))
 
     def test_get_valid_data_game_returns_list_of_algorithms_if_algorithm_specified(self):
         expected_algorithms = ['backtracking', 'norvig', 'brute force']
-        self.assertEquals(expected_algorithms, self.xml_config.get_valid_data_game(self.path_game_settings, 'algorithm', 'name'))
+        self.assertEquals(expected_algorithms, self.xml_config.get_valid_data_game(
+                                                            self.path_game_settings,
+                                                            'algorithm', 'name'))
 
     def test_get_complexity_returns_error_message_if_level_tag_does_not_exist(self):
         expected_message = "Tag is missing!"
@@ -131,7 +135,7 @@ class TestXmlConfig(unittest.TestCase):
         expected_message = "Invalid output type parameter"
         self.assertEquals(expected_message, self.xml_config.modify_output_type('not-valid'))
 
-    def test_modify_output_type_saves_console_output_type_in_config_file_if_output_type_is_console(self):
+    def test_modify_output_type_saves_console_in_config_file_if_output_type_is_console(self):
         expected_output_type = 'console'
         self.xml_config.modify_output_type('console')
         current_output_type = self.xml_config.get_output_type()
@@ -176,29 +180,29 @@ class TestXmlConfig(unittest.TestCase):
         current_algorithm = self.xml_config.get_algorithm()
         self.assertEquals(expected_algorithm, current_algorithm) 
 
-    def test_get_space_char_returns_error_message_if_space_char_tag_does_not_exist(self):
+    def test_get_empty_spot_char_returns_error_message_if_empty_spot_char_tag_does_not_exist(self):
         expected_message = "Tag is missing!"
         file_config = open(self.xml_config.path_name, 'w')
         file_config.write('<none>')
         file_config.close()
-        self.assertEquals(expected_message, self.xml_config.get_space_char())
+        self.assertEquals(expected_message, self.xml_config.get_empty_spot_char())
 
-    def test_get_space_char_returns_default_space_char_value_if_value_exists(self):
-        expected_default_space_char = '0'
-        self.assertEquals(expected_default_space_char, self.xml_config.get_space_char())        
+    def test_get_empty_spot_char_returns_default_empty_spot_char_value_if_value_exists(self):
+        expected_default_empty_spot_char = '0'
+        self.assertEquals(expected_default_empty_spot_char, self.xml_config.get_empty_spot_char())        
 
-    def test_modify_space_char_returns_error_message_if_space_char_tag_does_not_exist(self):
+    def test_modify_empty_spot_char_returns_error_message_if_empty_spot_char_tag_does_not_exist(self):
         expected_message = "Tag is missing!"
         file_config = open(self.xml_config.path_name, 'w')
         file_config.write('<config><ss>')
         file_config.close()
-        self.assertEquals(expected_message, self.xml_config.modify_space_char('*'))
+        self.assertEquals(expected_message, self.xml_config.modify_empty_spot_char('*'))
 
-    def test_modify_space_char_saves_a_dot_in_config_file_if_a_dot_is_used_as_empty_char(self):
-        expected_space_char = '.'
-        self.xml_config.modify_space_char('.')
-        current_space_char = self.xml_config.get_space_char()
-        self.assertEquals(expected_space_char, current_space_char)   
+    def test_modify_empty_spot_char_saves_a_dot_in_config_file_if_a_dot_is_used_as_empty_char(self):
+        expected_empty_spot_char = '.'
+        self.xml_config.modify_empty_spot_char('.')
+        current_empty_spot_char = self.xml_config.get_empty_spot_char()
+        self.assertEquals(expected_empty_spot_char, current_empty_spot_char)   
 
     def test_get_min_holes_by_complexity_when_complexity_is_easy(self):
         expected_min_holes = 20

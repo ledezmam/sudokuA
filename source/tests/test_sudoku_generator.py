@@ -205,11 +205,11 @@ class TestSudokuGenerator(unittest.TestCase):
                          (0, 7), (1, 7), (2, 7), (3, 7), (4, 7), (5, 7), (6, 7), (7, 7), (8, 7),
                          (0, 8), (1, 8), (2, 8), (3, 8), (4, 8), (5, 8), (6, 8), (7, 8), (8, 8)]
 
-        self.assertEquals(exp_positions, self.test_generator.get_positions(9))
+        self.assertEquals(exp_positions, self.test_generator.get_positions())
 
-    def test_search_returns_true_if_valid_sudoku_was_generated(self):
-        positions = self.test_generator.get_positions(9)
-        valid_board = self.test_generator.search(positions,0)
+    def test_fill_board_returns_true_if_valid_sudoku_was_generated(self):
+        positions = self.test_generator.get_positions()
+        valid_board = self.test_generator.fill_board(positions,0)
         expected_valid_status = True
         self.assertEquals(expected_valid_status, valid_board)
 
@@ -261,30 +261,6 @@ class TestSudokuGenerator(unittest.TestCase):
                                 ".2.934167\n"
         current_board_string = self.test_generator.get_board_format_to_string(board_to_format)
         self.assertEquals(expected_board_string, current_board_string)
-
-    def test_get_board_format_to_print_returns_format_by_quadrant(self):
-        board_to_format = [['1', '.', '.', '5', '4', '9', '6', '8', '3'],
-                           ['6', '4', '5', '.', '.', '3', '2', '.', '9'],
-                           ['.', '8', '9', '2', '6', '1', '7', '4', '.'],
-                           ['4', '.', '.', '.', '.', '.', '.', '5', '1'],
-                           ['8', '1', '3', '4', '5', '6', '.', '.', '.'],
-                           ['2', '5', '7', '1', '.', '.', '4', '3', '6'],
-                           ['9', '6', '4', '.', '1', '5', '3', '2', '8'],
-                           ['7', '3', '.', '.', '8', '2', '5', '9', '4'],
-                           ['.', '2', '.', '9', '3', '4', '1', '6', '7']]
-        expected_board_print = " 1 . . | 5 4 9 | 6 8 3 \n" + \
-                               " 6 4 5 | . . 3 | 2 . 9 \n" + \
-                               " . 8 9 | 2 6 1 | 7 4 . \n" + \
-                               " - - - + - - - + - - -\n" + \
-                               " 4 . . | . . . | . 5 1 \n" + \
-                               " 8 1 3 | 4 5 6 | . . . \n" + \
-                               " 2 5 7 | 1 . . | 4 3 6 \n" + \
-                               " - - - + - - - + - - -\n" + \
-                               " 9 6 4 | . 1 5 | 3 2 8 \n" + \
-                               " 7 3 . | . 8 2 | 5 9 4 \n" + \
-                               " . 2 . | 9 3 4 | 1 6 7 \n"
-        current_board_string = self.test_generator.get_board_format_to_print(board_to_format)
-        self.assertEquals(expected_board_print, current_board_string)
 
     def test_generate_sudoku_pattern_by_complexity_returns_solvable_sudoku_easy(self):
         self.test_generator.generate_sudoku_pattern_by_complexity(20, 25, '.')

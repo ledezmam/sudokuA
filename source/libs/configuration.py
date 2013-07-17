@@ -67,7 +67,7 @@ class Configuration():
         """
         raise Exception("Define this method in a sub-class")
 
-    def modify_space_char(self, empty_spot_char):
+    def modify_empty_spot_char(self, empty_spot_char):
         """Abstract method - Modifies the character used as empty spot for Sudoku solution in the 
                             configuration file.
            Definition and more documentation in the child class.
@@ -95,7 +95,7 @@ class Configuration():
         """
         raise Exception("Define this method in a sub-class")
 
-    def get_space_char(self):
+    def get_empty_spot_char(self):
         """Abstract method - Returns the character used as space set in the
            configuration file e.g. '0' 
 
